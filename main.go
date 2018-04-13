@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/csv"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
-	"regexp"
 	"strconv"
 )
 
@@ -30,11 +30,8 @@ func main() {
 		panic(err)
 	}
 
-	log.Print(file.Name())
-
-	reg := regexp.MustCompile(`(\d+)(.)(\d+)`)
-
 	content := csv.NewReader(file)
+	total, score := 0, 0
 	for {
 		record, err := content.Read()
 		if err == io.EOF {
@@ -43,16 +40,16 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		opers := reg.FindAllStringSubmatch(record[0], -1)
-		firstOperand, err := strconv.Atoi(opers[0][1])
-		if err != nil {
-			panic(err)
+
+		fmt.Printf("%s = ", record[0])
+		var answer int
+		fmt.Scanln(&answer)
+		if strconv.Itoa(answer) == record[1] {
+			score++
 		}
-		secondOperand, err := strconv.Atoi(opers[0][3])
-		if err != nil {
-			panic(err)
-		}
-		resultFunction := operators[opers[0][2]]
-		log.Println(resultFunction(firstOperand, secondOperand))
+
+		total++
 	}
+
+	fmt.Printf("Your score %d of %d\n", score, total)
 }
