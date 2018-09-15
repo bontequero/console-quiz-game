@@ -1,3 +1,3 @@
-# console-quiz-game
+# Gophercises
 
-Solution for exercise [Gophercises #1: Quiz Game](https://github.com/gophercises/quiz).
+Solutions for exercises from [Gophercises](https://gophercises.com/).

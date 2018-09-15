@@ -10,13 +10,7 @@ import (
 	"strconv"
 )
 
-const fileDefault = "problems.csv"
-
-var operators = map[string]func(int, int) int{
-	"+": func(a, b int) int {
-		return a + b
-	},
-}
+const fileDefault = "../problems.csv"
 
 func main() {
 	filename := flag.String(
@@ -27,7 +21,7 @@ func main() {
 
 	file, err := os.Open(*filename)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	content := csv.NewReader(file)
