@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-const fileDefault = "../problems.csv"
+const fileDefault = "problems.csv"
 
 func main() {
 	filename := flag.String(
