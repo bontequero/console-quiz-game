@@ -7,7 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"strconv"
+	"strings"
 	"time"
 )
 
@@ -55,24 +55,40 @@ func main() {
 	fmt.Print("Press Enter to start quiz")
 	fmt.Scanf("\n")
 
-	score := 0
-	end := make(chan int)
+	answers := make(chan struct{})
 	go func() {
-		var answer int
+		var answer string
 		for _, record := range content {
 			fmt.Printf("%s = ", record[0])
 			fmt.Scanln(&answer)
-			if strconv.Itoa(answer) == record[1] {
+			if strings.ToLower(strings.TrimSpace(answer)) ==
+				strings.ToLower(strings.TrimSpace(record[1])) {
+				answers <- struct{}{}
+			}
+		}
+		close(answers)
+	}()
+
+	correctCount := make(chan int)
+	go func() {
+		score := 0
+		for {
+			select {
+			case <-time.After(time.Duration(*timeLimit) * time.Second):
+				correctCount <- score
+				return
+			case _, received := <-answers:
+				if !received {
+					correctCount <- score
+					return
+				}
 				score++
 			}
 		}
-		end <- score
 	}()
 
 	select {
-	case <-time.After(time.Duration(*timeLimit) * time.Second):
-	case <-end:
+	case score := <-correctCount:
+		fmt.Printf("\nYour score %d of %d\n", score, len(content))
 	}
-
-	fmt.Printf("\nYour score %d of %d\n", score, len(content))
 }
